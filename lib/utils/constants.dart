@@ -132,6 +132,8 @@ class SuccessMessages {
   static const String sugerenciaCreated = 'Sugerencia enviada exitosamente';
 }
 
+// Expresiones Regulares
+
 
 // Formato de Fechas
 class DateFormats {

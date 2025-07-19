@@ -370,9 +370,6 @@ class WallyTextFields {
     if (value == null || value.isEmpty) {
       return 'El email es requerido';
     }
-    if (!RegExp(RegexPatterns.email).hasMatch(value)) {
-      return 'Ingresa un email válido';
-    }
     return null;
   }
 
@@ -386,9 +383,7 @@ class WallyTextFields {
     if (value.length > Validation.maxUsernameLength) {
       return 'Máximo ${Validation.maxUsernameLength} caracteres';
     }
-    if (!RegExp(RegexPatterns.username).hasMatch(value)) {
-      return 'Solo letras, números y guiones bajos';
-    }
+
     return null;
   }
 
@@ -425,9 +420,7 @@ class WallyTextFields {
     if (value.length > Validation.maxNombreLength) {
       return 'Máximo ${Validation.maxNombreLength} caracteres';
     }
-    if (!RegExp(RegexPatterns.onlyLetters).hasMatch(value)) {
-      return 'Solo se permiten letras';
-    }
+
     return null;
   }
 
@@ -435,9 +428,7 @@ class WallyTextFields {
     if (value == null || value.isEmpty) {
       return 'El teléfono es requerido';
     }
-    if (!RegExp(RegexPatterns.phone).hasMatch(value)) {
-      return 'Ingresa un teléfono válido';
-    }
+
     return null;
   }
 }
