@@ -1,4 +1,6 @@
+import 'package:appwally/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/reserva.dart';
 import '../models/cliente.dart';
 import '../models/cancha.dart';
@@ -83,56 +85,55 @@ class ReservasProvider with ChangeNotifier {
   }
 
   // Crear nueva reserva
-  Future<bool> createReserva({
-    required double monto,
-    required DateTime fechaHoraInicio,
-    required DateTime fechaHoraFin,
-    required String clienteNombre,
-    required String canchaNombre,
-    required int promocionId,
-    String? usuarioNombre,
-  }) async {
-    _setCreating(true);
-    _clearError();
+Future<bool> createReservaWithAuth({
+  required double monto,
+  required DateTime fechaHoraInicio,
+  required DateTime fechaHoraFin,
+  required String canchaNombre,
+  required int promocionId,
+  required String clienteNombre, // Siempre requerido - puede ser el mismo usuario o otro cliente
+  String? usuarioNombre, // Opcional - solo si un usuario hace la reserva
+}) async {
+  _setCreating(true);
+  _clearError();
 
-    try {
-      final createRequest = CreateReservaRequest(
-        monto: monto,
-        fechaHoraInicio: fechaHoraInicio,
-        fechaHoraFin: fechaHoraFin,
-        cliente: clienteNombre,
-        cancha: canchaNombre,
-        promocion: promocionId,
-        usuario: usuarioNombre,
-      );
+  try {
+    final createRequest = CreateReservaRequest(
+      monto: monto,
+      fechaHoraInicio: fechaHoraInicio,
+      fechaHoraFin: fechaHoraFin,
+      cliente: clienteNombre,
+      cancha: canchaNombre,
+      promocion: promocionId,
+      usuario: usuarioNombre,
+    );
 
-      final response = await _apiService.createReserva(createRequest.toJson());
+    final response = await _apiService.createReserva(createRequest.toJson());
+    
+    if (response != null) {
+      final nuevaReserva = Reserva.fromJson(response);
+      _reservas.insert(0, nuevaReserva);
       
-      if (response != null) {
-        // Agregar la nueva reserva a la lista local
-        final nuevaReserva = Reserva.fromJson(response);
-        _reservas.insert(0, nuevaReserva);
-        
-        // Si es una reserva del usuario actual, agregarla a misReservas
-        if (_misReservas.isNotEmpty && 
-            nuevaReserva.cliente.id == _misReservas.first.cliente.id) {
-          _misReservas.insert(0, nuevaReserva);
-        }
-        
-        _setCreating(false);
-        notifyListeners();
-        return true;
-      } else {
-        _setError('Error al crear la reserva');
-        _setCreating(false);
-        return false;
+      // Si es una reserva del usuario actual, agregarla a misReservas
+      if (_misReservas.isNotEmpty && 
+          nuevaReserva.cliente.id == _misReservas.first.cliente.id) {
+        _misReservas.insert(0, nuevaReserva);
       }
-    } catch (e) {
-      _setError('Error al crear reserva: ${e.toString()}');
+      
+      _setCreating(false);
+      notifyListeners();
+      return true;
+    } else {
+      _setError('Error al crear la reserva');
       _setCreating(false);
       return false;
     }
+  } catch (e) {
+    _setError('Error al crear reserva: ${e.toString()}');
+    _setCreating(false);
+    return false;
   }
+}
 
   // Actualizar reserva
   Future<bool> updateReserva(int reservaId, UpdateReservaRequest updateData) async {
