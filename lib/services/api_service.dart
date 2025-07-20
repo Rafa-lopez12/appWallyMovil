@@ -247,6 +247,68 @@ class ApiService {
     return await get(ApiEndpoints.bitacora);
   }
 
+
+  Future<Map<String, dynamic>> getDailyStats(String date) async {
+  return await get('/reserva/stats/daily/$date');
+}
+
+// Estadísticas mensuales (solo usuarios)
+Future<Map<String, dynamic>> getMonthlyStats(int year, int month) async {
+  return await get('/reserva/stats/monthly/$year/$month');
+}
+
+// Estadísticas de cliente específico
+Future<Map<String, dynamic>> getClientStats(String clienteId) async {
+  return await get('/reserva/stats/client/$clienteId');
+}
+
+// Reservas de cliente específico
+Future<List<dynamic>> getClientReservas(String clienteId) async {
+  return await get('/reserva/client/$clienteId/reservas');
+}
+
+// Mis estadísticas (para clientes)
+Future<Map<String, dynamic>> getMyStats() async {
+  return await get('/reserva/my-stats');
+}
+
+// Mis reservas (para clientes)
+Future<List<dynamic>> getMyReservas() async {
+  return await get('/reserva/my-reservas');
+}
+
+// ============ MÉTODOS PARA FIDELIZACIÓN ============
+
+// Verificar descuento de fidelización
+Future<Map<String, dynamic>> checkLoyaltyDiscount(String clienteId) async {
+  return await get('/reserva/loyalty/check/$clienteId');
+}
+
+// ============ MÉTODOS PARA CAMBIO DE CONTRASEÑA ============
+
+// Cambiar contraseña de cliente específico (para usuarios)
+Future<Map<String, dynamic>> changeClientPassword(
+  String clienteId, 
+  String currentPassword, 
+  String newPassword
+) async {
+  return await patch('/cliente/$clienteId/change-password', {
+    'currentPassword': currentPassword,
+    'newPassword': newPassword,
+  });
+}
+
+// Cambiar mi contraseña (para clientes)
+Future<Map<String, dynamic>> changeMyPassword(
+  String currentPassword, 
+  String newPassword
+) async {
+  return await patch('/cliente/change-my-password', {
+    'currentPassword': currentPassword,
+    'newPassword': newPassword,
+  });
+}
+
   // Limpiar recursos
   void dispose() {
     _client.close();
