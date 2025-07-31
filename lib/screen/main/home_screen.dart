@@ -254,15 +254,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: _navigateToReservations,
               ),
             ),
-            const SizedBox(width: UIConstants.defaultPadding),
-            Expanded(
-              child: _buildActionCard(
-                icon: Icons.location_on_outlined,
-                title: 'Ver\nCanchas',
-                color: AppColors.accent,
-                onTap: _navigateToCanchas,
-              ),
-            ),
           ],
         ),
       ],

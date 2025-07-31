@@ -266,24 +266,36 @@ class SugerenciasProvider with ChangeNotifier {
   }
 
   // Métodos privados
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
+
 
   void _setCreating(bool creating) {
     _isCreating = creating;
     notifyListeners();
   }
+  void _setLoading(bool loading) {
+    if (_isLoading != loading) {
+      _isLoading = loading;
+      // Usar addPostFrameCallback para evitar llamar notifyListeners durante build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
+  }
 
   void _setError(String error) {
     _errorMessage = error;
-    notifyListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
   }
 
   void _clearError() {
-    _errorMessage = null;
-    notifyListeners();
+    if (_errorMessage != null) {
+      _errorMessage = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        notifyListeners();
+      });
+    }
   }
 
   // Limpiar estado

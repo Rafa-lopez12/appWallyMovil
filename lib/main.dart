@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'config/theme.dart';
 import 'config/routes.dart';
@@ -8,7 +9,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Inicializar servicios
-  await AppProviders.initializeServices();
+  try {
+    await AppProviders.initializeServices();
+  } catch (e) {
+    debugPrint('Error inicializando servicios: $e');
+  }
   
   runApp(const WallyApp());
 }
@@ -20,22 +25,27 @@ class WallyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: AppProviders.getProviders(),
-      child: Consumer(
-        builder: (context, _, __) {
-          return MaterialApp(
-            title: 'Wally Reservas',
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.system,
-            routes: AppRoutes.routes,
-            onGenerateRoute: AppRoutes.onGenerateRoute,
-            onUnknownRoute: AppRoutes.onUnknownRoute,
-            initialRoute: AppRoutes.welcome,
-            debugShowCheckedModeBanner: false,
-            builder: (context, child) {
-              return _AppInitializer(child: child!);
-            },
-          );
+      child: MaterialApp(
+        title: 'Wally Reservas',
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.system,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', ''), // English
+          Locale('es', ''), // Spanish
+        ],
+        routes: AppRoutes.routes,
+        onGenerateRoute: AppRoutes.onGenerateRoute,
+        onUnknownRoute: AppRoutes.onUnknownRoute,
+        initialRoute: AppRoutes.welcome,
+        debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          return _AppInitializer(child: child!);
         },
       ),
     );
@@ -56,7 +66,11 @@ class _AppInitializerState extends State<_AppInitializer> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppProviders.initializeProviders(context);
+      try {
+        AppProviders.initializeProviders(context);
+      } catch (e) {
+        debugPrint('Error inicializando providers: $e');
+      }
     });
   }
 

@@ -1,12 +1,13 @@
-import 'package:appwally/widgets/common/custom_buttom.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../config/colors.dart';
 import '../../utils/constants.dart';
 import '../../widgets/common/custom_text_field.dart';
-import '../../widgets/common/custom_text_field.dart';
+import '../../widgets/common/custom_buttom.dart';
 import '../../widgets/common/custom_app_bar.dart';
 import '../../widgets/common/loading_widget.dart';
-import '../../services/auth_service.dart';
+import '../../providers/auth_provider.dart';
+import '../../utils/helpers.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,10 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService = AuthService();
   
   bool _isLoading = false;
-  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -34,11 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: WallyAppBars.section(
         title: 'Iniciar Sesión',
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        foregroundColor: AppColors.primary,
+        onBackPressed: () => Navigator.pop(context),
       ),
       body: SafeArea(
         child: OverlayLoading(
@@ -202,19 +199,24 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final result = await _authService.loginUser(
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      
+      final success = await authProvider.loginUser(
         _usernameController.text.trim(),
         _passwordController.text,
       );
 
-      if (result.success) {
-        _showSuccessMessage(result.message);
+      if (success) {
+        Helpers.showSuccessSnackBar(context, 'Inicio de sesión exitoso');
         _navigateToHome();
       } else {
-        _showErrorMessage(result.message);
+        Helpers.showErrorSnackBar(
+          context, 
+          authProvider.errorMessage ?? 'Error al iniciar sesión'
+        );
       }
     } catch (e) {
-      _showErrorMessage('Error inesperado. Inténtalo nuevamente.');
+      Helpers.showErrorSnackBar(context, 'Error inesperado. Inténtalo nuevamente.');
     } finally {
       if (mounted) {
         setState(() {
@@ -229,14 +231,14 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Recuperar Contraseña'),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               'Para recuperar tu contraseña, contacta con el administrador:',
             ),
-            const SizedBox(height: UIConstants.defaultPadding),
-            const SelectableText(
+            SizedBox(height: UIConstants.defaultPadding),
+            SelectableText(
               'admin@wallyreservas.com',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -261,38 +263,5 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _navigateToHome() {
     Navigator.pushReplacementNamed(context, '/home');
-  }
-
-  void _showSuccessMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(UIConstants.defaultRadius),
-        ),
-      ),
-    );
-  }
-
-  void _showErrorMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(UIConstants.defaultRadius),
-        ),
-        action: SnackBarAction(
-          label: 'Cerrar',
-          textColor: AppColors.textOnPrimary,
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
-      ),
-    );
   }
 }

@@ -3,6 +3,8 @@ import '../screen/auth/welcome_screen.dart';
 import '../screen/auth/login_screen.dart';
 import '../screen/auth/register_screen.dart';
 import '../screen/main/home_screen.dart';
+import '../screen/reservas/nueva_reserva_screen.dart';
+import '../screen/reservas/reservas_screen.dart';
 
 class AppRoutes {
   static const String welcome = '/welcome';
@@ -20,6 +22,8 @@ class AppRoutes {
       login: (context) => const LoginScreen(),
       register: (context) => const RegisterScreen(),
       home: (context) => const HomeScreen(),
+      reservas: (context) => const ReservasScreen(),
+      nuevaReserva: (context) => const NuevaReservaScreen(),
       // TODO: Agregar más rutas cuando implementes las pantallas
     };
   }

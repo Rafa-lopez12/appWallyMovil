@@ -1,6 +1,6 @@
 // API Configuration
 class AppConstants {
-  static const String baseUrl = 'http://localhost:4000'; // Tu backend NestJS
+  static const String baseUrl = 'https://31369ae7201d.ngrok-free.app'; // Tu backend NestJS
   static const String apiVersion = '/api/v1';
   static const Duration timeoutDuration = Duration(seconds: 30);
 }

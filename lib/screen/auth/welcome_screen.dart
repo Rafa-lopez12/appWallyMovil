@@ -66,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -74,20 +74,24 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           gradient: AppColors.primaryGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(UIConstants.largePadding),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _buildHeader(),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: _buildContent(),
-                ),
-                _buildActions(),
-              ],
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(UIConstants.defaultPadding),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                          MediaQuery.of(context).padding.top - 
+                          MediaQuery.of(context).padding.bottom,
+              ),
+              child: Column(
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: UIConstants.largePadding),
+                  _buildContent(),
+                  const SizedBox(height: UIConstants.largePadding),
+                  _buildActions(),
+                  const SizedBox(height: UIConstants.defaultPadding),
+                ],
+              ),
             ),
           ),
         ),
@@ -197,16 +201,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         'title': 'Reserva 24/7',
         'description': 'Disponible siempre',
       },
-      {
-        'icon': Icons.local_offer,
-        'title': 'Promociones',
-        'description': 'Descuentos especiales',
-      },
-      {
-        'icon': Icons.sports_soccer,
-        'title': 'Múltiples canchas',
-        'description': 'Elige tu favorita',
-      },
+
     ];
 
     return Row(
@@ -321,28 +316,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             const SizedBox(height: UIConstants.largePadding),
             
             // Enlace para invitados
-            TextButton(
-              onPressed: _showGuestOptions,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '¿Solo quieres explorar? ',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textOnPrimary.withOpacity(0.8),
-                    ),
-                  ),
-                  Text(
-                    'Continuar como invitado',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textOnPrimary,
-                      fontWeight: FontWeight.w600,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: UIConstants.defaultPadding),
             
             // Información de versión
